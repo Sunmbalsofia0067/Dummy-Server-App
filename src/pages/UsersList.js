@@ -21,7 +21,6 @@ const showDetailDialogue = (userDetail) =>{
   }
 
   catch(err){
-    console.log(err);
     toast.error('🦄 Something went Wrong!!!', {
       position: "top-center",
       autoClose: 5000,
@@ -38,12 +37,11 @@ const showDetailDialogue = (userDetail) =>{
 
 const fetchUsers = async () => {
   try{
-    const userData= await axios.get('http://localhost:3000/users');
+    const userData= await axios.get('http://localhost:5000/users');
     setUserData(userData.data);
     
   }
   catch(err){
-    console.log(err);
     toast.error('🦄 Something went Wrong!!!', {
       position: "top-center",
       autoClose: 5000,
@@ -58,9 +56,8 @@ const fetchUsers = async () => {
 };
 
 const removeUser = async (userId) =>{
-  //salert(userId);
   try{
-    await axios.delete(`http://localhost:3000/users/${userId}`);
+    await axios.delete(`http://localhost:5000/users/${userId}`);
     const removeUserResponse = userData.filter(user=> (user.id !== userId));
     setUserData(removeUserResponse);
     alert("User successfully deleted!");
@@ -82,7 +79,6 @@ const removeUser = async (userId) =>{
 useEffect(()=> {
     fetchUsers();
 },[]);
-console.log(modalData.bio);
     return(  
       <Fragment>
 
@@ -109,7 +105,6 @@ console.log(modalData.bio);
         <tbody>
             {
                 userData.map((user, index)=>{
-                    //console.log(user);
                     return <tr key={index}>
                     <td>{user.id}</td>
                     <td colSpan={2}>

@@ -1,6 +1,7 @@
 import { useState, useEffect} from 'react';
-import {useSearchParams} from 'react-router-dom';
+import {useSearchParams, useNavigate, Link } from 'react-router-dom';
 import axios from "axios";
+import * as routes from '../constants/routePaths.js';
 import { toast } from 'react-toastify';
 import {Form, Button, FloatingLabel} from 'react-bootstrap';
 
@@ -10,15 +11,28 @@ const AddUser = () => {
     const [bio, setBio] = useState("");
     const [searchParams] = useSearchParams();
     const userId= searchParams.get("userId");
+    const navigate = useNavigate();
 
     async function editUserData(){  
         try{
-            console.log(userId);
+            //console.log(userId);
             if(!userId) return;
-            const user =await axios.get(`http://localhost:3000/users/${userId}`);
-            setUserName(user.data.name);
-            setEmail(user.data.email);
-            setBio(user.data.bio);
+            const user =await axios.get(`http://localhost:5000/users/${userId}`);
+             if(user.data){
+                setUserName(user.data.name);
+                setEmail(user.data.email);
+                setBio(user.data.bio);
+            }
+
+            else{
+                toast.error(
+                    '🦄 User not Found!!'
+                );
+                setUserName(user.data.name);
+                setEmail(user.data.email);
+                setBio(user.data.bio);
+            }
+            
         }  
     
         catch(err){
@@ -31,7 +45,7 @@ const AddUser = () => {
 
     useEffect(()=>{
         editUserData();
-    },[]);
+    }, [userId]);
 
     const addUserInfo = async(event) =>{
 
@@ -41,7 +55,7 @@ const AddUser = () => {
             if(!userId){
                 //alert("Editing DataAPI ");
                 console.log(userName, email, bio);
-                await axios.post('http://localhost:3000/users', { 
+                await axios.post('http://localhost:5000/users', { 
                 name:userName,
                 email: email,
                 bio: bio
@@ -53,7 +67,7 @@ const AddUser = () => {
             }
     
             else{
-                await axios.patch(`http://localhost:3000/users/${userId}`, { 
+                await axios.patch(`http://localhost:5000/users/${userId}`, { 
                     name:userName,
                     email: email,
                     bio: bio
@@ -62,6 +76,7 @@ const AddUser = () => {
                 setBio("");
                 setEmail("");
                 setUserName("");
+                 navigate('/');
             }
         }
        catch(err){
@@ -72,13 +87,32 @@ const AddUser = () => {
     };
     return(
         <div>
-        <div style={{
-            display: "flex",
-            justifyContent: "space-between",
-            padding:"10px"
-          }}>
+        <div>
         {
-            userId ? (<h2>Edit User </h2>): (<h2>Add User </h2>)
+            userId ? (
+                
+                <div style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    padding:"10px"
+                  }}>
+                    <h2>Edit User </h2> 
+                    <Button variant="outline-info">
+                    <Link to={routes.usersPage}> Homepage</Link></Button>
+                  </div>
+            
+            ): (
+                
+                <div style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    padding:"10px"
+                  }}>
+                    <h2>Add User </h2> 
+                    <Button variant="outline-info">
+                    <Link to={routes.usersPage}> Homepage</Link></Button>
+                  </div>
+                 )
         }
             
           </div>
